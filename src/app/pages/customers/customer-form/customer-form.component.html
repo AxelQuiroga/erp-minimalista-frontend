@@ -1,28 +1,38 @@
-<h1>Nuevo Cliente</h1>
+<div class="page">
+  <h1>Nuevo Cliente</h1>
 
-<form>
-  <div class="form-group">
-    <label for="name">Nombre</label>
-    <input id="name" type="text" class="form-control" placeholder="Nombre del cliente">
-  </div>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
 
-  <div class="form-group">
-    <label for="email">Email</label>
-    <input id="email" type="email" class="form-control" placeholder="correo@ejemplo.com">
-  </div>
+    <div class="form-group">
+      <label for="name">Nombre</label>
+      <input id="name" type="text" class="form-control" formControlName="name" placeholder="Nombre del cliente">
+    </div>
 
-  <div class="form-group">
-    <label for="phone">Teléfono</label>
-    <input id="phone" type="tel" class="form-control" placeholder="+54 11 1234-5678">
-  </div>
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input id="email" type="email" class="form-control" formControlName="email" placeholder="correo@ejemplo.com">
+    </div>
 
-  <div class="form-group">
-    <label for="address">Dirección</label>
-    <input id="address" type="text" class="form-control" placeholder="Dirección">
-  </div>
+    <div class="form-group">
+      <label for="phone">Teléfono</label>
+      <input id="phone" type="tel" class="form-control" formControlName="phone" placeholder="+54 11 1234-5678">
+    </div>
 
-  <div class="form-actions">
-    <button type="submit" class="btn btn-primary">Guardar</button>
-    <a routerLink="/customers" class="btn btn-secondary">Cancelar</a>
-  </div>
-</form>
+    <div class="form-group">
+      <label for="address">Dirección</label>
+      <input id="address" type="text" class="form-control" formControlName="address" placeholder="Dirección">
+    </div>
+
+    @if (error) {
+      <p class="error">{{ error }}</p>
+    }
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary" [disabled]="form.invalid || submitting">
+        {{ submitting ? 'Guardando...' : 'Guardar' }}
+      </button>
+      <a routerLink="/customers" class="btn btn-secondary">Cancelar</a>
+    </div>
+
+  </form>
+</div>

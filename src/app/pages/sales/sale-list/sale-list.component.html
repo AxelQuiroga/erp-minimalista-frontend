@@ -1,22 +1,46 @@
-<h1>Ventas</h1>
+<div class="page">
+  <h1>Ventas</h1>
 
-<a routerLink="/sales/new" class="btn btn-primary">Nueva Venta</a>
+  <a routerLink="/sales/new" class="btn btn-primary">Nueva Venta</a>
 
-<table>
-  <thead>
-    <tr>
-      <th>ID</th>
-      <th>Cliente</th>
-      <th>Total</th>
-      <th>Método Pago</th>
-      <th>Estado</th>
-      <th>Fecha</th>
-      <th>Acciones</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td colspan="7">Cargando ventas...</td>
-    </tr>
-  </tbody>
-</table>
+  @if (loading) {
+    <p class="loading">Cargando ventas...</p>
+  }
+
+  @if (error) {
+    <p class="error">{{ error }}</p>
+  }
+
+  @if (!loading && !error) {
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Total</th>
+          <th>Método Pago</th>
+          <th>Estado</th>
+          <th>Fecha</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (sale of sales; track sale.id) {
+          <tr>
+            <td>{{ sale.id }}</td>
+            <td>{{ sale.totalAmount | currency }}</td>
+            <td>{{ sale.paymentMethod }}</td>
+            <td>{{ sale.status }}</td>
+            <td>{{ sale.createdAt }}</td>
+            <td>
+              <a [routerLink]="['/sales', sale.id]">Ver</a>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="6">No hay ventas registradas</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</div>

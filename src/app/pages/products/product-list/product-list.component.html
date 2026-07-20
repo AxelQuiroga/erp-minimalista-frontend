@@ -1,46 +1,48 @@
-<h1>Productos</h1>
+<div class="page">
+  <h1>Productos</h1>
 
-<a routerLink="/products/new" class="btn btn-primary">Nuevo Producto</a>
+  <a routerLink="/products/new" class="btn btn-primary">Nuevo Producto</a>
 
-@if (loading) {
-  <p class="loading">Cargando productos...</p>
-}
+  @if (loading) {
+    <p class="loading">Cargando productos...</p>
+  }
 
-@if (error) {
-  <p class="error">{{ error }}</p>
-}
+  @if (error) {
+    <p class="error">{{ error }}</p>
+  }
 
-@if (!loading && !error) {
-  <table>
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Nombre</th>
-        <th>SKU</th>
-        <th>Precio Venta</th>
-        <th>Stock</th>
-        <th>Activo</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      @for (product of products; track product.id) {
+  @if (!loading && !error) {
+    <table>
+      <thead>
         <tr>
-          <td>{{ product.id }}</td>
-          <td>{{ product.name }}</td>
-          <td>{{ product.sku }}</td>
-          <td>{{ product.salePrice | currency }}</td>
-          <td>{{ product.currentStock }}</td>
-          <td>{{ product.active ? 'Sí' : 'No' }}</td>
-          <td>
-            <a [routerLink]="['/products', product.id]">Ver</a>
-          </td>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>SKU</th>
+          <th>Precio Venta</th>
+          <th>Stock</th>
+          <th>Activo</th>
+          <th>Acciones</th>
         </tr>
-      } @empty {
-        <tr>
-          <td colspan="7">No hay productos registrados</td>
-        </tr>
-      }
-    </tbody>
-  </table>
-}
+      </thead>
+      <tbody>
+        @for (product of products; track product.id) {
+          <tr>
+            <td>{{ product.id }}</td>
+            <td>{{ product.name }}</td>
+            <td>{{ product.sku }}</td>
+            <td>{{ product.salePrice | currency }}</td>
+            <td>{{ product.currentStock }}</td>
+            <td>{{ product.active ? 'Sí' : 'No' }}</td>
+            <td>
+              <a [routerLink]="['/products', product.id]">Ver</a>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="7">No hay productos registrados</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</div>

@@ -1,34 +1,48 @@
-<h1>Detalle del Producto</h1>
+<div class="page">
+  <h1>Detalle del Producto</h1>
 
-<div class="detail-card">
-  <div class="detail-row">
-    <span class="label">ID:</span>
-    <span class="value">-</span>
-  </div>
-  <div class="detail-row">
-    <span class="label">Nombre:</span>
-    <span class="value">-</span>
-  </div>
-  <div class="detail-row">
-    <span class="label">SKU:</span>
-    <span class="value">-</span>
-  </div>
-  <div class="detail-row">
-    <span class="label">Precio Costo:</span>
-    <span class="value">-</span>
-  </div>
-  <div class="detail-row">
-    <span class="label">Precio Venta:</span>
-    <span class="value">-</span>
-  </div>
-  <div class="detail-row">
-    <span class="label">Stock:</span>
-    <span class="value">-</span>
-  </div>
-  <div class="detail-row">
-    <span class="label">Estado:</span>
-    <span class="value">-</span>
-  </div>
+  @if (loading) {
+    <p class="loading">Cargando producto...</p>
+  }
+
+  @if (error) {
+    <p class="error">{{ error }}</p>
+  }
+
+  @if (product) {
+    <div class="detail-card">
+      <div class="detail-row">
+        <span class="label">ID:</span>
+        <span class="value">{{ product.id }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="label">Nombre:</span>
+        <span class="value">{{ product.name }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="label">SKU:</span>
+        <span class="value">{{ product.sku }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="label">Precio Costo:</span>
+        <span class="value">{{ product.costPrice | currency }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="label">Precio Venta:</span>
+        <span class="value">{{ product.salePrice | currency }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="label">Stock:</span>
+        <span class="value">{{ product.currentStock }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="label">Estado:</span>
+        <span class="value">{{ product.active ? 'Activo' : 'Inactivo' }}</span>
+      </div>
+    </div>
+
+    <div style="margin-top: 1rem;">
+      <a routerLink="/products" class="btn btn-secondary">Volver</a>
+    </div>
+  }
 </div>
-
-<a routerLink="/products" class="btn btn-secondary">Volver</a>

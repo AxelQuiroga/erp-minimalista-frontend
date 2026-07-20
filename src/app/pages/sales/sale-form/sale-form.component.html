@@ -1,20 +1,78 @@
-<h1>Nueva Venta</h1>
+<div class="page">
+  <h1>Nueva Venta</h1>
 
-<form>
-  <div class="form-group">
-    <label for="customer">Cliente</label>
-    <select id="customer" class="form-control">
-      <option value="">Seleccionar cliente...</option>
-    </select>
-  </div>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
 
-  <fieldset>
-    <legend>Productos</legend>
-    <p>Agregue productos a la venta</p>
-  </fieldset>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="customerId">Cliente</label>
+        <select id="customerId" class="form-control" formControlName="customerId">
+          <option value="0" disabled>Seleccionar cliente...</option>
+          @for (c of customers; track c.id) {
+            <option [value]="c.id">{{ c.name }}</option>
+          }
+        </select>
+      </div>
 
-  <div class="form-actions">
-    <button type="submit" class="btn btn-primary">Crear Venta</button>
-    <a routerLink="/sales" class="btn btn-secondary">Cancelar</a>
-  </div>
-</form>
+      <div class="form-group">
+        <label for="paymentMethod">Método de Pago</label>
+        <select id="paymentMethod" class="form-control" formControlName="paymentMethod">
+          <option value="" disabled>Seleccionar...</option>
+          <option value="CASH">Efectivo</option>
+          <option value="CARD">Tarjeta</option>
+          <option value="TRANSFER">Transferencia</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="notes">Notas (opcional)</label>
+      <textarea id="notes" class="form-control" formControlName="notes" rows="2" placeholder="Notas de la venta"></textarea>
+    </div>
+
+    <fieldset>
+      <legend>Productos</legend>
+
+      <div formArrayName="items">
+        @for (item of items.controls; track $index) {
+          <div [formGroupName]="$index" class="item-row">
+            <select class="form-control" formControlName="productId" (change)="onProductSelect($index)">
+              <option value="0" disabled>Producto...</option>
+              @for (p of products; track p.id) {
+                <option [value]="p.id">{{ p.name }} ({{ p.sku }})</option>
+              }
+            </select>
+
+            <input type="number" class="form-control" formControlName="quantity" placeholder="Cant." min="1">
+
+            <input type="number" class="form-control" formControlName="unitPrice" placeholder="Precio" readonly>
+
+            <span class="item-subtotal">
+              {{ (item.get('quantity')?.value || 0) * (item.get('unitPrice')?.value || 0) | currency }}
+            </span>
+
+            @if (items.controls.length > 1) {
+              <button type="button" class="btn btn-danger" (click)="removeItem($index)">X</button>
+            }
+          </div>
+        }
+      </div>
+
+      <button type="button" class="btn btn-secondary" (click)="addItem()">+ Agregar Producto</button>
+
+      <p class="total"><strong>Total: {{ total | currency }}</strong></p>
+    </fieldset>
+
+    @if (error) {
+      <p class="error">{{ error }}</p>
+    }
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary" [disabled]="form.invalid || items.length === 0 || submitting">
+        {{ submitting ? 'Creando...' : 'Crear Venta' }}
+      </button>
+      <a routerLink="/sales" class="btn btn-secondary">Cancelar</a>
+    </div>
+
+  </form>
+</div>

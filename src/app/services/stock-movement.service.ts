@@ -2,11 +2,12 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { StockMovement, RegisterMovementRequest, Page } from '../models/stock-movement';
+import { API_URL } from '../api.config';
 
 @Injectable({ providedIn: 'root' })
 export class StockMovementService {
 
-  private readonly apiUrl = 'http://localhost:8080/api/stock-movements';
+  private readonly apiUrl = `${API_URL}/api/stock-movements`;
 
   constructor(private http: HttpClient) {}
 
