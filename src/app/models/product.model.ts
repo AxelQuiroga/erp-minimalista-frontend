@@ -1,0 +1,26 @@
+export interface Product {
+  id: number;
+  categoryId: number;
+  name: string;
+  sku: string;
+  costPrice: number;
+  salePrice: number;
+  currentStock: number;
+  active: boolean;
+}
+
+export interface CreateProductRequest {
+  categoryId: number;
+  name: string;
+  sku: string;
+  costPrice: number;
+  salePrice: number;
+  currentStock: number;
+}
+
+export interface UpdateProductRequest {
+  name: string;
+  sku: string;
+  costPrice: number;
+  salePrice: number;
+}
