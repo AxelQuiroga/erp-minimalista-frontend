@@ -30,4 +30,8 @@ export class CustomerService {
   deactivate(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
+
+  updateStatus(id: number, status: { active: boolean }): Observable<Customer> {
+    return this.http.patch<Customer>(`${this.apiUrl}/${id}/status`, status);
+}
 }

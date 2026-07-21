@@ -35,10 +35,15 @@
         <span class="label">Stock:</span>
         <span class="value">{{ product.currentStock }}</span>
       </div>
-      <div class="detail-row">
-        <span class="label">Estado:</span>
-        <span class="value">{{ product.active ? 'Activo' : 'Inactivo' }}</span>
-      </div>
+     <div class="detail-row">
+    <span class="label">Estado:</span>
+    <span class="value">
+        {{ product.active ? 'Activo' : 'Inactivo' }}
+        @if (!product.active) {
+            <span class="badge badge-inactive">Inactivo</span>
+        }
+    </span>
+</div>
     </div>
 
     <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">

@@ -36,9 +36,14 @@
         <span class="value">{{ customer.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
       </div>
       <div class="detail-row">
-        <span class="label">Estado:</span>
-        <span class="value">{{ customer.active ? 'Activo' : 'Inactivo' }}</span>
-      </div>
+    <span class="label">Estado:</span>
+    <span class="value">
+        {{ customer.active ? 'Activo' : 'Inactivo' }}
+        @if (!customer.active) {
+            <span class="badge badge-inactive">Inactivo</span>
+        }
+    </span>
+</div>
     </div>
 
     <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">

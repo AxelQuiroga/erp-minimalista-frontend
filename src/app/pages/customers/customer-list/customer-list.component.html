@@ -3,6 +3,13 @@
 
   <a routerLink="/customers/new" class="btn btn-primary">Nuevo Cliente</a>
 
+<label class="filter-toggle">
+    <input type="checkbox"
+           [checked]="showInactive()"
+           (change)="showInactive.set(!showInactive())" />
+    Mostrar inactivos
+</label>
+
   @if (loading()) {
     <p class="loading">Cargando clientes...</p>
   }
@@ -24,20 +31,33 @@
         </tr>
       </thead>
       <tbody>
-        @for (customer of customers(); track customer.id) {
-          <tr>
+        @for (customer of filteredCustomers(); track customer.id) {
+          <tr [class.inactive]="!customer.active">
             <td>{{ customer.id }}</td>
             <td>{{ customer.name }}</td>
             <td>{{ customer.email }}</td>
             <td>{{ customer.phone }}</td>
-            <td>{{ customer.active ? 'Sí' : 'No' }}</td>
+            <td>
+    {{ customer.active ? 'Sí' : 'No' }}
+    @if (!customer.active) {
+        <span class="badge badge-inactive">Inactivo</span>
+    }
+</td>
             <td>
               <a [routerLink]="['/customers', customer.id]">Ver</a>
               @if (customer.active) {
-                <button class="btn btn-danger" style="margin-left: 0.5rem; padding: 0.2rem 0.5rem; font-size: 0.8rem;" (click)="deactivateCustomer(customer.id)">
-                  Desactivar
-                </button>
-              }
+    <button class="btn btn-danger" style="margin-left: 0.5rem; padding: 0.2rem 0.5rem; font-size: 0.8rem;"
+            [disabled]="togglingId() === customer.id"
+            (click)="deactivateCustomer(customer.id)">
+        {{ togglingId() === customer.id ? 'Desactivando...' : 'Desactivar' }}
+    </button>
+} @else {
+    <button class="btn btn-secondary" style="margin-left: 0.5rem; padding: 0.2rem 0.5rem; font-size: 0.8rem;"
+            [disabled]="togglingId() === customer.id"
+            (click)="reactivateCustomer(customer.id)">
+        {{ togglingId() === customer.id ? 'Reactivando...' : 'Reactivar' }}
+    </button>
+}
             </td>
           </tr>
         } @empty {

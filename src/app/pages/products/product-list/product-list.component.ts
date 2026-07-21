@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, computed } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CurrencyPipe } from '@angular/common';
 
@@ -16,6 +16,12 @@ export class ProductListComponent implements OnInit {
   readonly products = signal<Product[]>([]);
   readonly loading = signal(true);
   readonly error = signal('');
+  readonly togglingId = signal<number | null>(null);
+  readonly showInactive = signal(false);
+  readonly filteredProducts = computed(() => {
+    const all = this.products();
+    return this.showInactive() ? all : all.filter(p => p.active);
+  })
 
   constructor(private productService: ProductService) {}
 
@@ -37,17 +43,38 @@ export class ProductListComponent implements OnInit {
   }
 
   deactivateProduct(id: number): void {
-    if (!confirm('¿Estás seguro de desactivar este producto? Se descontará del stock automáticamente.')) return;
+    if (!confirm('¿Estás seguro de desactivar este producto? Dejará de estar disponible en ventas.')) return;
 
+    this.togglingId.set(id);                                             // ← NUEVO
     this.productService.deactivate(id).subscribe({
-      next: () => {
-        this.products.update(list =>
-          list.map(p => p.id === id ? { ...p, active: false } : p)
-        );
-      },
-      error: () => {
-        this.error.set('Error al desactivar el producto');
-      }
+        next: () => {
+            this.products.update(list =>
+                list.map(p => p.id === id ? { ...p, active: false } : p)
+            );
+            this.togglingId.set(null);                                   // ← NUEVO
+        },
+        error: () => {
+            this.error.set('Error al desactivar el producto');
+            this.togglingId.set(null);                                   // ← NUEVO
+        }
     });
-  }
+}
+
+  reactivateProduct(id: number): void {
+    if (!confirm('¿Estás seguro de reactivar este producto?')) return;
+
+    this.togglingId.set(id);                                             // ← NUEVO
+    this.productService.updateStatus(id, { active: true }).subscribe({
+        next: (updated) => {
+            this.products.update(list =>
+                list.map(p => p.id === id ? updated : p)
+            );
+            this.togglingId.set(null);                                   // ← NUEVO
+        },
+        error: () => {
+            this.error.set('Error al reactivar el producto');
+            this.togglingId.set(null);                                   // ← NUEVO
+        }
+    });
+}
 }

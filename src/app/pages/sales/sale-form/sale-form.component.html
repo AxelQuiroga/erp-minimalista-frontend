@@ -9,7 +9,9 @@
         <select id="customerId" class="form-control" formControlName="customerId">
           <option value="0" disabled>Seleccionar cliente...</option>
           @for (c of customers(); track c.id) {
+              @if (c.active) {
             <option [value]="c.id">{{ c.name }}</option>
+          }
           }
         </select>
       </div>
@@ -39,7 +41,9 @@
             <select class="form-control" formControlName="productId" (change)="onProductSelect($index)">
               <option value="0" disabled>Producto...</option>
               @for (p of products(); track p.id) {
+                @if (p.active) {
                 <option [value]="p.id">{{ p.name }} ({{ p.sku }})</option>
+              }
               }
             </select>
 

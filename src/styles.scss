@@ -252,3 +252,40 @@ table {
   gap: 0.5rem;
   margin-top: 1.5rem;
 }
+
+/* ──────────────────────────────────────────
+   Inactive row + badge
+   ────────────────────────────────────────── */
+tr.inactive {
+  opacity: 0.5;
+  background: var(--gray-100);
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 999px;
+  vertical-align: middle;
+}
+
+.badge-inactive {
+  background: var(--gray-200);
+  color: var(--gray-600);
+}
+
+.filter-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-left: 1rem;
+  font-size: 0.85rem;
+  color: var(--gray-600);
+  cursor: pointer;
+  user-select: none;
+
+  input {
+    cursor: pointer;
+  }
+}

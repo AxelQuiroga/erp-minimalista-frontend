@@ -30,4 +30,8 @@ export class ProductService {
   deactivate(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
+
+  updateStatus(id: number, status: { active: boolean }): Observable<Product> {
+    return this.http.patch<Product>(`${this.apiUrl}/${id}/status`, status);
+}
 }
