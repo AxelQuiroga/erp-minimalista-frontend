@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { CustomerService } from '../../../services/customer.service';
@@ -12,21 +12,38 @@ import { Customer } from '../../../models/customer.model';
 })
 export class CustomerListComponent implements OnInit {
 
-  customers: Customer[] = [];
-  loading = true;
-  error = '';
+  readonly customers = signal<Customer[]>([]);
+  readonly loading = signal(true);
+  readonly error = signal('');
 
   constructor(private customerService: CustomerService) {}
 
   ngOnInit(): void {
+    this.loadCustomers();
+  }
+
+  private loadCustomers(): void {
     this.customerService.getAll().subscribe({
       next: (data) => {
-        this.customers = data;
-        this.loading = false;
+        this.customers.set(data);
+        this.loading.set(false);
       },
       error: () => {
-        this.error = 'Error al cargar clientes';
-        this.loading = false;
+        this.error.set('Error al cargar clientes');
+        this.loading.set(false);
+      }
+    });
+  }
+
+  deactivateCustomer(id: number): void {
+    if (!confirm('¿Estás seguro de desactivar este cliente?')) return;
+
+    this.customerService.deactivate(id).subscribe({
+      next: () => {
+        this.customers.update(list => list.map(c => c.id === id ? { ...c, active: false } : c));
+      },
+      error: () => {
+        this.error.set('Error al desactivar el cliente');
       }
     });
   }

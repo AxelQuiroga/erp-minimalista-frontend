@@ -1,0 +1,81 @@
+<div class="page">
+  <h1>Venta #{{ sale()?.id }}</h1>
+
+  @if (loading()) {
+    <p class="loading">Cargando venta...</p>
+  }
+
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
+  }
+
+  @if (sale(); as sale) {
+    <div class="detail-card">
+      <div class="detail-row">
+        <span class="label">ID:</span>
+        <span class="value">{{ sale.id }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="label">Cliente ID:</span>
+        <span class="value">{{ sale.customerId }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="label">Fecha:</span>
+        <span class="value">{{ sale.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="label">Estado:</span>
+        <span class="value">{{ sale.status }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="label">Método Pago:</span>
+        <span class="value">{{ sale.paymentMethod }}</span>
+      </div>
+      @if (sale.notes) {
+        <div class="detail-row">
+          <span class="label">Notas:</span>
+          <span class="value">{{ sale.notes }}</span>
+        </div>
+      }
+      @if (sale.cancellationReason) {
+        <div class="detail-row">
+          <span class="label">Motivo Cancel.:</span>
+          <span class="value">{{ sale.cancellationReason }}</span>
+        </div>
+      }
+      <div class="detail-row">
+        <span class="label">Total:</span>
+        <span class="value" style="font-weight: 700; font-size: 1.2rem;">{{ sale.totalAmount | currency }}</span>
+      </div>
+    </div>
+
+    <h2>Productos</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Producto ID</th>
+          <th>Cantidad</th>
+          <th>Precio Unit.</th>
+          <th>Subtotal</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of sale.items; track item.id) {
+          <tr>
+            <td>{{ item.productId }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>{{ item.unitPrice | currency }}</td>
+            <td>{{ item.subtotal | currency }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+
+    <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
+      @if (sale.status === 'COMPLETED') {
+        <button class="btn btn-danger" (click)="cancelSale()">Cancelar Venta</button>
+      }
+      <a routerLink="/sales" class="btn btn-secondary">Volver</a>
+    </div>
+  }
+</div>

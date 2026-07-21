@@ -3,15 +3,15 @@
 
   <a routerLink="/customers/new" class="btn btn-primary">Nuevo Cliente</a>
 
-  @if (loading) {
+  @if (loading()) {
     <p class="loading">Cargando clientes...</p>
   }
 
-  @if (error) {
-    <p class="error">{{ error }}</p>
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
   }
 
-  @if (!loading && !error) {
+  @if (!loading() && !error()) {
     <table>
       <thead>
         <tr>
@@ -24,7 +24,7 @@
         </tr>
       </thead>
       <tbody>
-        @for (customer of customers; track customer.id) {
+        @for (customer of customers(); track customer.id) {
           <tr>
             <td>{{ customer.id }}</td>
             <td>{{ customer.name }}</td>
@@ -33,6 +33,11 @@
             <td>{{ customer.active ? 'Sí' : 'No' }}</td>
             <td>
               <a [routerLink]="['/customers', customer.id]">Ver</a>
+              @if (customer.active) {
+                <button class="btn btn-danger" style="margin-left: 0.5rem; padding: 0.2rem 0.5rem; font-size: 0.8rem;" (click)="deactivateCustomer(customer.id)">
+                  Desactivar
+                </button>
+              }
             </td>
           </tr>
         } @empty {

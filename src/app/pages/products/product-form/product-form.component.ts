@@ -1,11 +1,11 @@
-import { Component, OnInit } from '@angular/core';
-import { RouterLink, Router } from '@angular/router';
+import { Component, OnInit, signal } from '@angular/core';
+import { RouterLink, Router, ActivatedRoute } from '@angular/router';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 
 import { ProductService } from '../../../services/product.service';
 import { CategoryService } from '../../../services/category.service';
 import { Category } from '../../../models/category.model';
-import { CreateProductRequest } from '../../../models/product.model';
+import { CreateProductRequest, UpdateProductRequest } from '../../../models/product.model';
 
 @Component({
   selector: 'app-product-form',
@@ -15,9 +15,14 @@ import { CreateProductRequest } from '../../../models/product.model';
 })
 export class ProductFormComponent implements OnInit {
 
-  categories: Category[] = [];
-  submitting = false;
-  error = '';
+  readonly categories = signal<Category[]>([]);
+  readonly isSubmitting = signal(false);
+  readonly loading = signal(true);
+  readonly error = signal('');
+
+  isEditing = false;
+  editingId = 0;
+  pageTitle = 'Nuevo Producto';
 
   form = new FormGroup({
     name: new FormControl('', Validators.required),
@@ -31,28 +36,51 @@ export class ProductFormComponent implements OnInit {
   constructor(
     private productService: ProductService,
     private categoryService: CategoryService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) {
+      this.isEditing = true;
+      this.editingId = Number(id);
+      this.pageTitle = 'Editar Producto';
+
+      this.productService.getById(this.editingId).subscribe({
+        next: (product) => this.form.patchValue(product),
+        error: () => this.error.set('Error al cargar el producto')
+      });
+    }
+
     this.categoryService.getAll().subscribe({
-      next: (data) => this.categories = data,
-      error: () => this.error = 'Error al cargar categorías'
+      next: (data) => this.categories.set(data),
+      error: () => this.error.set('Error al cargar categorías')
     });
   }
 
   onSubmit(): void {
     if (this.form.invalid) return;
 
-    this.submitting = true;
-    this.error = '';
+    this.isSubmitting.set(true);
+    this.error.set('');
 
-    this.productService.create(this.form.value as CreateProductRequest).subscribe({
-      next: () => this.router.navigate(['/products']),
-      error: () => {
-        this.error = 'Error al crear el producto';
-        this.submitting = false;
-      }
-    });
+    if (this.isEditing) {
+      this.productService.update(this.editingId, this.form.value as UpdateProductRequest).subscribe({
+        next: () => this.router.navigate(['/products']),
+        error: () => {
+          this.error.set('Error al actualizar el producto');
+          this.isSubmitting.set(false);
+        }
+      });
+    } else {
+      this.productService.create(this.form.value as CreateProductRequest).subscribe({
+        next: () => this.router.navigate(['/products']),
+        error: () => {
+          this.error.set('Error al crear el producto');
+          this.isSubmitting.set(false);
+        }
+      });
+    }
   }
 }

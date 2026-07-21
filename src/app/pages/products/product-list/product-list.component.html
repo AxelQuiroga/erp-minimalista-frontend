@@ -3,15 +3,15 @@
 
   <a routerLink="/products/new" class="btn btn-primary">Nuevo Producto</a>
 
-  @if (loading) {
+  @if (loading()) {
     <p class="loading">Cargando productos...</p>
   }
 
-  @if (error) {
-    <p class="error">{{ error }}</p>
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
   }
 
-  @if (!loading && !error) {
+  @if (!loading() && !error()) {
     <table>
       <thead>
         <tr>
@@ -25,7 +25,7 @@
         </tr>
       </thead>
       <tbody>
-        @for (product of products; track product.id) {
+        @for (product of products(); track product.id) {
           <tr>
             <td>{{ product.id }}</td>
             <td>{{ product.name }}</td>
@@ -35,6 +35,12 @@
             <td>{{ product.active ? 'Sí' : 'No' }}</td>
             <td>
               <a [routerLink]="['/products', product.id]">Ver</a>
+              <a [routerLink]="['/products', product.id, 'edit']" style="margin-left: 0.5rem;">Editar</a>
+              @if (product.active) {
+                <button class="btn btn-danger" style="margin-left: 0.5rem; padding: 0.2rem 0.5rem; font-size: 0.8rem;" (click)="deactivateProduct(product.id)">
+                  Desactivar
+                </button>
+              }
             </td>
           </tr>
         } @empty {

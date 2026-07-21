@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { RouterLink, ActivatedRoute } from '@angular/router';
 import { CurrencyPipe } from '@angular/common';
 
@@ -13,9 +13,9 @@ import { Product } from '../../../models/product.model';
 })
 export class ProductDetailComponent implements OnInit {
 
-  product?: Product;
-  loading = true;
-  error = '';
+  readonly product = signal<Product | undefined>(undefined);
+  readonly loading = signal(true);
+  readonly error = signal('');
 
   constructor(
     private route: ActivatedRoute,
@@ -27,12 +27,12 @@ export class ProductDetailComponent implements OnInit {
 
     this.productService.getById(id).subscribe({
       next: (data) => {
-        this.product = data;
-        this.loading = false;
+        this.product.set(data);
+        this.loading.set(false);
       },
-      error: (err) => {
-        this.error = 'Error al cargar el producto';
-        this.loading = false;
+      error: () => {
+        this.error.set('Error al cargar el producto');
+        this.loading.set(false);
       }
     });
   }

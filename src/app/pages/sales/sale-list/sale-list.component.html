@@ -3,15 +3,15 @@
 
   <a routerLink="/sales/new" class="btn btn-primary">Nueva Venta</a>
 
-  @if (loading) {
+  @if (loading()) {
     <p class="loading">Cargando ventas...</p>
   }
 
-  @if (error) {
-    <p class="error">{{ error }}</p>
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
   }
 
-  @if (!loading && !error) {
+  @if (!loading() && !error()) {
     <table>
       <thead>
         <tr>
@@ -24,15 +24,20 @@
         </tr>
       </thead>
       <tbody>
-        @for (sale of sales; track sale.id) {
+        @for (sale of sales(); track sale.id) {
           <tr>
             <td>{{ sale.id }}</td>
             <td>{{ sale.totalAmount | currency }}</td>
             <td>{{ sale.paymentMethod }}</td>
             <td>{{ sale.status }}</td>
-            <td>{{ sale.createdAt }}</td>
+            <td>{{ sale.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
             <td>
               <a [routerLink]="['/sales', sale.id]">Ver</a>
+              @if (sale.status === 'COMPLETED') {
+                <button class="btn btn-danger" style="margin-left: 0.5rem; padding: 0.2rem 0.5rem; font-size: 0.8rem;" (click)="cancelSale(sale)">
+                  Cancelar
+                </button>
+              }
             </td>
           </tr>
         } @empty {

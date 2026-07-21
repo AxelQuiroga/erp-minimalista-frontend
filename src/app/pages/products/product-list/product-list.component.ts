@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CurrencyPipe } from '@angular/common';
 
@@ -13,21 +13,40 @@ import { Product } from '../../../models/product.model';
 })
 export class ProductListComponent implements OnInit {
 
-  products: Product[] = [];
-  loading = true;
-  error = '';
+  readonly products = signal<Product[]>([]);
+  readonly loading = signal(true);
+  readonly error = signal('');
 
   constructor(private productService: ProductService) {}
 
   ngOnInit(): void {
+    this.loadProducts();
+  }
+
+  private loadProducts(): void {
     this.productService.getAll().subscribe({
       next: (data) => {
-        this.products = data;
-        this.loading = false;
+        this.products.set(data);
+        this.loading.set(false);
       },
-      error: (err) => {
-        this.error = 'Error al cargar productos';
-        this.loading = false;
+      error: () => {
+        this.error.set('Error al cargar productos');
+        this.loading.set(false);
+      }
+    });
+  }
+
+  deactivateProduct(id: number): void {
+    if (!confirm('¿Estás seguro de desactivar este producto? Se descontará del stock automáticamente.')) return;
+
+    this.productService.deactivate(id).subscribe({
+      next: () => {
+        this.products.update(list =>
+          list.map(p => p.id === id ? { ...p, active: false } : p)
+        );
+      },
+      error: () => {
+        this.error.set('Error al desactivar el producto');
       }
     });
   }

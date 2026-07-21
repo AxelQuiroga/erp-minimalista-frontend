@@ -1,0 +1,48 @@
+<div class="page">
+  <h1>Detalle del Cliente</h1>
+
+  @if (loading()) {
+    <p class="loading">Cargando cliente...</p>
+  }
+
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
+  }
+
+  @if (customer(); as customer) {
+    <div class="detail-card">
+      <div class="detail-row">
+        <span class="label">ID:</span>
+        <span class="value">{{ customer.id }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="label">Nombre:</span>
+        <span class="value">{{ customer.name }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="label">Email:</span>
+        <span class="value">{{ customer.email }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="label">Teléfono:</span>
+        <span class="value">{{ customer.phone }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="label">Dirección:</span>
+        <span class="value">{{ customer.address }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="label">Fecha de creación:</span>
+        <span class="value">{{ customer.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="label">Estado:</span>
+        <span class="value">{{ customer.active ? 'Activo' : 'Inactivo' }}</span>
+      </div>
+    </div>
+
+    <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
+      <a routerLink="/customers" class="btn btn-secondary">Volver</a>
+    </div>
+  }
+</div>

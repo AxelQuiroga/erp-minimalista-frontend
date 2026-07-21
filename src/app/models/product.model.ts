@@ -19,8 +19,10 @@ export interface CreateProductRequest {
 }
 
 export interface UpdateProductRequest {
+  categoryId: number;
   name: string;
   sku: string;
   costPrice: number;
   salePrice: number;
+  currentStock: number;
 }

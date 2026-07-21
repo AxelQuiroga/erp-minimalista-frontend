@@ -1,15 +1,15 @@
 <div class="page">
   <h1>Detalle del Producto</h1>
 
-  @if (loading) {
+  @if (loading()) {
     <p class="loading">Cargando producto...</p>
   }
 
-  @if (error) {
-    <p class="error">{{ error }}</p>
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
   }
 
-  @if (product) {
+  @if (product(); as product) {
     <div class="detail-card">
       <div class="detail-row">
         <span class="label">ID:</span>
@@ -41,7 +41,8 @@
       </div>
     </div>
 
-    <div style="margin-top: 1rem;">
+    <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
+      <a [routerLink]="['/products', product.id, 'edit']" class="btn btn-primary">Editar</a>
       <a routerLink="/products" class="btn btn-secondary">Volver</a>
     </div>
   }

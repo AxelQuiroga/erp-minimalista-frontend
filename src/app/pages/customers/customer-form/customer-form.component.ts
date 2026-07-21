@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { RouterLink, Router } from '@angular/router';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 
@@ -13,8 +13,8 @@ import { CreateCustomerRequest } from '../../../models/customer.model';
 })
 export class CustomerFormComponent {
 
-  submitting = false;
-  error = '';
+  readonly isSubmitting = signal(false);
+  readonly error = signal('');
 
   form = new FormGroup({
     name: new FormControl('', Validators.required),
@@ -31,14 +31,14 @@ export class CustomerFormComponent {
   onSubmit(): void {
     if (this.form.invalid) return;
 
-    this.submitting = true;
-    this.error = '';
+    this.isSubmitting.set(true);
+    this.error.set('');
 
     this.customerService.create(this.form.value as CreateCustomerRequest).subscribe({
       next: () => this.router.navigate(['/customers']),
       error: () => {
-        this.error = 'Error al crear el cliente';
-        this.submitting = false;
+        this.error.set('Error al crear el cliente');
+        this.isSubmitting.set(false);
       }
     });
   }
