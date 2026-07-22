@@ -2,7 +2,8 @@ import { Component, OnInit, signal, computed, DestroyRef, inject } from '@angula
 import { RouterLink } from '@angular/router';
 import { CurrencyPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Subject, debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
+import { Subject, debounceTime, distinctUntilChanged, switchMap, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { ProductService } from '../../../services/product.service';
@@ -35,7 +36,9 @@ export class ProductListComponent implements OnInit {
     this.search$.pipe(
       debounceTime(300),
       distinctUntilChanged(),
-      switchMap(term => this.productService.getAll(term || undefined)),
+      switchMap(term => this.productService.getAll(term || undefined).pipe(
+        catchError((err) => { console.error(err); return of([]); })
+      )),
       takeUntilDestroyed(this.destroyRef)
     ).subscribe({
       next: (data) => this.products.set(data),

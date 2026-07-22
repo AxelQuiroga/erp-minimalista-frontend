@@ -1,7 +1,8 @@
 import { Component, OnInit, signal, computed, DestroyRef, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { Subject, debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
+import { Subject, debounceTime, distinctUntilChanged, switchMap, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { CustomerService } from '../../../services/customer.service';
@@ -34,7 +35,9 @@ export class CustomerListComponent implements OnInit {
     this.search$.pipe(
       debounceTime(300),
       distinctUntilChanged(),
-      switchMap(term => this.customerService.getAll(term || undefined)),
+      switchMap(term => this.customerService.getAll(term || undefined).pipe(
+        catchError((err) => { console.error(err); return of([]); })
+      )),
       takeUntilDestroyed(this.destroyRef)
     ).subscribe({
       next: (data) => this.customers.set(data),

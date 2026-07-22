@@ -2,7 +2,8 @@ import { Component, OnInit, signal, computed, DestroyRef, inject } from '@angula
 import { RouterLink } from '@angular/router';
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Subject, debounceTime, switchMap } from 'rxjs';
+import { Subject, debounceTime, switchMap, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { SaleService } from '../../../services/sale.service';
@@ -43,9 +44,13 @@ export class SaleListComponent implements OnInit {
         const from = this.fromFilter() || undefined;
         const to = this.toFilter() || undefined;
         if (!status && !from && !to) {
-          return this.saleService.getAll();
+          return this.saleService.getAll().pipe(
+            catchError((err) => { console.error(err); return of([]); })
+          );
         }
-        return this.saleService.getAll(status, from, to);
+        return this.saleService.getAll(status, from, to).pipe(
+          catchError((err) => { console.error(err); return of([]); })
+        );
       }),
       takeUntilDestroyed(this.destroyRef)
     ).subscribe({
@@ -69,7 +74,7 @@ export class SaleListComponent implements OnInit {
     }
 
     // Validar que no sea fecha futura
-    const today = new Date().toISOString().split('T')[0];
+    const today = new Date().toLocaleDateString('sv-SE');
     if (to && to > today) {
       this.dateError.set('La fecha "Hasta" no puede ser futura');
       return;
