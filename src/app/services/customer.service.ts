@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Customer, CreateCustomerRequest, UpdateCustomerRequest } from '../models/customer.model';
 import { API_URL } from '../api.config';
@@ -11,8 +11,11 @@ export class CustomerService {
 
   constructor(private http: HttpClient) {}
 
-  getAll(): Observable<Customer[]> {
-    return this.http.get<Customer[]>(this.apiUrl);
+  getAll(q?: string, active?: boolean): Observable<Customer[]> {
+    let params = new HttpParams();
+    if (q) params = params.set('q', q);
+    if (active !== undefined) params = params.set('active', active);
+    return this.http.get<Customer[]>(this.apiUrl, { params });
   }
 
   getById(id: number): Observable<Customer> {
@@ -33,5 +36,5 @@ export class CustomerService {
 
   updateStatus(id: number, status: { active: boolean }): Observable<Customer> {
     return this.http.patch<Customer>(`${this.apiUrl}/${id}/status`, status);
-}
+  }
 }

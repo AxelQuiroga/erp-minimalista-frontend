@@ -1,41 +1,27 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { forkJoin } from 'rxjs';
+import { CurrencyPipe, DatePipe } from '@angular/common';
 
-import { ProductService } from '../../services/product.service';
-import { CustomerService } from '../../services/customer.service';
-import { SaleService } from '../../services/sale.service';
+import { DashboardService, DashboardData } from '../../services/dashboard.service';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [RouterLink],
+  imports: [RouterLink, CurrencyPipe, DatePipe],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })
 export class DashboardComponent implements OnInit {
 
-  readonly productCount = signal(0);
-  readonly customerCount = signal(0);
-  readonly saleCount = signal(0);
+  readonly data = signal<DashboardData | null>(null);
   readonly loading = signal(true);
   readonly error = signal('');
 
-  constructor(
-    private productService: ProductService,
-    private customerService: CustomerService,
-    private saleService: SaleService
-  ) {}
+  constructor(private dashboardService: DashboardService) {}
 
   ngOnInit(): void {
-    forkJoin({
-      products: this.productService.getAll(),
-      customers: this.customerService.getAll(),
-      sales: this.saleService.getAll()
-    }).subscribe({
+    this.dashboardService.get().subscribe({
       next: (result) => {
-        this.productCount.set(result.products.length);
-        this.customerCount.set(result.customers.length);
-        this.saleCount.set(result.sales.length);
+        this.data.set(result);
         this.loading.set(false);
       },
       error: () => {

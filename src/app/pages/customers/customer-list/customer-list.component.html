@@ -6,12 +6,19 @@
     <a routerLink="/dashboard" class="btn btn-secondary">← Volver al Panel</a>
   </div>
 
-<label class="filter-toggle">
+  <div class="search-bar">
+    <input type="text"
+           placeholder="Buscar por nombre o email..."
+           [ngModel]="search()"
+           (ngModelChange)="onSearchChange($event)" />
+  </div>
+
+  <label class="filter-toggle">
     <input type="checkbox"
            [checked]="showInactive()"
            (change)="showInactive.set(!showInactive())" />
     Mostrar inactivos
-</label>
+  </label>
 
   @if (loading()) {
     <p class="loading">Cargando clientes...</p>
@@ -41,26 +48,26 @@
             <td>{{ customer.email }}</td>
             <td>{{ customer.phone }}</td>
             <td>
-    {{ customer.active ? 'Sí' : 'No' }}
-    @if (!customer.active) {
-        <span class="badge badge-inactive">Inactivo</span>
-    }
-</td>
+              {{ customer.active ? 'Sí' : 'No' }}
+              @if (!customer.active) {
+                <span class="badge badge-inactive">Inactivo</span>
+              }
+            </td>
             <td>
               <a [routerLink]="['/customers', customer.id]">Ver</a>
               @if (customer.active) {
-    <button class="btn btn-danger" style="margin-left: 0.5rem; padding: 0.2rem 0.5rem; font-size: 0.8rem;"
-            [disabled]="togglingId() === customer.id"
-            (click)="deactivateCustomer(customer.id)">
-        {{ togglingId() === customer.id ? 'Desactivando...' : 'Desactivar' }}
-    </button>
-} @else {
-    <button class="btn btn-secondary" style="margin-left: 0.5rem; padding: 0.2rem 0.5rem; font-size: 0.8rem;"
-            [disabled]="togglingId() === customer.id"
-            (click)="reactivateCustomer(customer.id)">
-        {{ togglingId() === customer.id ? 'Reactivando...' : 'Reactivar' }}
-    </button>
-}
+                <button class="btn btn-danger" style="margin-left: 0.5rem; padding: 0.2rem 0.5rem; font-size: 0.8rem;"
+                        [disabled]="togglingId() === customer.id"
+                        (click)="deactivateCustomer(customer.id)">
+                  {{ togglingId() === customer.id ? 'Desactivando...' : 'Desactivar' }}
+                </button>
+              } @else {
+                <button class="btn btn-secondary" style="margin-left: 0.5rem; padding: 0.2rem 0.5rem; font-size: 0.8rem;"
+                        [disabled]="togglingId() === customer.id"
+                        (click)="reactivateCustomer(customer.id)">
+                  {{ togglingId() === customer.id ? 'Reactivando...' : 'Reactivar' }}
+                </button>
+              }
             </td>
           </tr>
         } @empty {

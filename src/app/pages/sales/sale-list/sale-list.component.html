@@ -6,6 +6,16 @@
     <a routerLink="/dashboard" class="btn btn-secondary">← Volver al Panel</a>
   </div>
 
+  <div class="filters-row">
+    <select [ngModel]="statusFilter()" (ngModelChange)="statusFilter.set($event); onFilterChange()">
+      <option value="">Todos los estados</option>
+      <option value="COMPLETED">Completadas</option>
+      <option value="CANCELLED">Canceladas</option>
+    </select>
+    <input type="date" [ngModel]="fromFilter()" (ngModelChange)="fromFilter.set($event); onFilterChange()" placeholder="Desde" />
+    <input type="date" [ngModel]="toFilter()" (ngModelChange)="toFilter.set($event); onFilterChange()" placeholder="Hasta" />
+  </div>
+
   @if (loading()) {
     <p class="loading">Cargando ventas...</p>
   }

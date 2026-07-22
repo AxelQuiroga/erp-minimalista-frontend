@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Product, CreateProductRequest, UpdateProductRequest } from '../models/product.model';
 import { API_URL } from '../api.config';
@@ -11,8 +11,12 @@ export class ProductService {
 
   constructor(private http: HttpClient) {}
 
-  getAll(): Observable<Product[]> {
-    return this.http.get<Product[]>(this.apiUrl);
+  getAll(q?: string, minStock?: number, active?: boolean): Observable<Product[]> {
+    let params = new HttpParams();
+    if (q) params = params.set('q', q);
+    if (minStock !== undefined) params = params.set('minStock', minStock);
+    if (active !== undefined) params = params.set('active', active);
+    return this.http.get<Product[]>(this.apiUrl, { params });
   }
 
   getById(id: number): Observable<Product> {
@@ -33,5 +37,5 @@ export class ProductService {
 
   updateStatus(id: number, status: { active: boolean }): Observable<Product> {
     return this.http.patch<Product>(`${this.apiUrl}/${id}/status`, status);
-}
+  }
 }

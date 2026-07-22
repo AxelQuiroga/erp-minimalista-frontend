@@ -9,22 +9,57 @@
     <p class="error">{{ error() }}</p>
   }
 
-  @if (!loading() && !error()) {
+  @if (data(); as d) {
     <div class="cards">
       <a routerLink="/products" class="card">
-        <h2>{{ productCount() }}</h2>
+        <h2>{{ d.productCount }}</h2>
         <p>Productos</p>
       </a>
 
-      <a routerLink="/sales" class="card">
-        <h2>{{ saleCount() }}</h2>
-        <p>Ventas</p>
-      </a>
-
       <a routerLink="/customers" class="card">
-        <h2>{{ customerCount() }}</h2>
+        <h2>{{ d.customerCount }}</h2>
         <p>Clientes</p>
       </a>
+
+      <a routerLink="/sales" class="card">
+        <h2>{{ d.saleCount }}</h2>
+        <p>Ventas Totales</p>
+      </a>
+
+      <a routerLink="/sales" class="card">
+        <h2>{{ d.salesToday }}</h2>
+        <p>Ventas Hoy</p>
+        <small>{{ d.salesTodayAmount | currency }}</small>
+      </a>
+
+      <a routerLink="/products" class="card card-warning">
+        <h2>{{ d.lowStockCount }}</h2>
+        <p>Productos con Stock Bajo</p>
+      </a>
     </div>
+
+    @if (d.recentSales.length > 0) {
+      <h2 style="margin-top: 2rem;">Últimas Ventas</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Total</th>
+            <th>Estado</th>
+            <th>Fecha</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (sale of d.recentSales; track sale.id) {
+            <tr>
+              <td><a [routerLink]="['/sales', sale.id]">{{ sale.id }}</a></td>
+              <td>{{ sale.totalAmount | currency }}</td>
+              <td>{{ sale.status }}</td>
+              <td>{{ sale.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
   }
 </div>

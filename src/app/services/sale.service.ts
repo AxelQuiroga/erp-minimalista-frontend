@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Sale, CreateSaleRequest, CancelSaleRequest } from '../models/sale.model';
 import { API_URL } from '../api.config';
@@ -11,8 +11,12 @@ export class SaleService {
 
   constructor(private http: HttpClient) {}
 
-  getAll(): Observable<Sale[]> {
-    return this.http.get<Sale[]>(this.apiUrl);
+  getAll(status?: string, from?: string, to?: string): Observable<Sale[]> {
+    let params = new HttpParams();
+    if (status) params = params.set('status', status);
+    if (from) params = params.set('from', from);
+    if (to) params = params.set('to', to);
+    return this.http.get<Sale[]>(this.apiUrl, { params });
   }
 
   getById(id: number): Observable<Sale> {
