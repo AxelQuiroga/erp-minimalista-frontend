@@ -14,7 +14,14 @@
     </select>
     <input type="date" [ngModel]="fromFilter()" (ngModelChange)="fromFilter.set($event); onFilterChange()" placeholder="Desde" />
     <input type="date" [ngModel]="toFilter()" (ngModelChange)="toFilter.set($event); onFilterChange()" placeholder="Hasta" />
+    @if (hasActiveFilters()) {
+      <button class="btn btn-secondary" (click)="clearFilters()">Limpiar filtros</button>
+    }
   </div>
+
+  @if (dateError()) {
+    <p class="error">{{ dateError() }}</p>
+  }
 
   @if (loading()) {
     <p class="loading">Cargando ventas...</p>

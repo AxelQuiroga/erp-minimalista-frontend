@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, DestroyRef, inject } from '@angular/core';
+import { Component, OnInit, signal, computed, DestroyRef, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -19,10 +19,18 @@ export class SaleListComponent implements OnInit {
   readonly sales = signal<Sale[]>([]);
   readonly loading = signal(true);
   readonly error = signal('');
+  readonly dateError = signal('');
 
   readonly statusFilter = signal('');
   readonly fromFilter = signal('');
   readonly toFilter = signal('');
+
+  readonly hasActiveFilters = computed(() => {
+    const from = this.fromFilter();
+    const to = this.toFilter();
+    const status = this.statusFilter();
+    return !!(status || from || to);
+  });
 
   private readonly filter$ = new Subject<void>();
   private readonly destroyRef = inject(DestroyRef);
@@ -51,6 +59,35 @@ export class SaleListComponent implements OnInit {
   }
 
   onFilterChange(): void {
+    const from = this.fromFilter();
+    const to = this.toFilter();
+
+    // Validar que from <= to si ambos están presentes
+    if (from && to && from > to) {
+      this.dateError.set('La fecha "Desde" no puede ser posterior a "Hasta"');
+      return;
+    }
+
+    // Validar que no sea fecha futura
+    const today = new Date().toISOString().split('T')[0];
+    if (to && to > today) {
+      this.dateError.set('La fecha "Hasta" no puede ser futura');
+      return;
+    }
+    if (from && from > today) {
+      this.dateError.set('La fecha "Desde" no puede ser futura');
+      return;
+    }
+
+    this.dateError.set('');
+    this.filter$.next();
+  }
+
+  clearFilters(): void {
+    this.statusFilter.set('');
+    this.fromFilter.set('');
+    this.toFilter.set('');
+    this.dateError.set('');
     this.filter$.next();
   }
 
