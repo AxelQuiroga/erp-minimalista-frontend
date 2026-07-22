@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { Subject, debounceTime, distinctUntilChanged, switchMap, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { HttpErrorResponse } from '@angular/common/http';
 
 import { ProductService } from '../../../services/product.service';
 import { Product } from '../../../models/product.model';
@@ -42,7 +43,7 @@ export class ProductListComponent implements OnInit {
       takeUntilDestroyed(this.destroyRef)
     ).subscribe({
       next: (data) => this.products.set(data),
-      error: () => this.error.set('Error al buscar productos')
+      error: (err: HttpErrorResponse) => this.error.set(err.error?.error || 'Error al buscar productos')
     });
   }
 
@@ -61,8 +62,8 @@ export class ProductListComponent implements OnInit {
         this.products.set(data);
         this.loading.set(false);
       },
-      error: () => {
-        this.error.set('Error al cargar productos');
+      error: (err: HttpErrorResponse) => {
+        this.error.set(err.error?.error || 'Error al cargar productos');
         this.loading.set(false);
       }
     });
@@ -79,8 +80,8 @@ export class ProductListComponent implements OnInit {
             );
             this.togglingId.set(null);
         },
-        error: () => {
-            this.error.set('Error al desactivar el producto');
+        error: (err: HttpErrorResponse) => {
+            this.error.set(err.error?.error || 'Error al desactivar el producto');
             this.togglingId.set(null);
         }
     });
@@ -97,8 +98,8 @@ export class ProductListComponent implements OnInit {
             );
             this.togglingId.set(null);
         },
-        error: () => {
-            this.error.set('Error al reactivar el producto');
+        error: (err: HttpErrorResponse) => {
+            this.error.set(err.error?.error || 'Error al reactivar el producto');
             this.togglingId.set(null);
         }
     });

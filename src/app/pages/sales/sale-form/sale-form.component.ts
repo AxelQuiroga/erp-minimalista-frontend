@@ -2,6 +2,7 @@ import { Component, OnInit, signal, computed } from '@angular/core';
 import { RouterLink, Router } from '@angular/router';
 import { ReactiveFormsModule, FormGroup, FormControl, FormArray, Validators } from '@angular/forms';
 import { CurrencyPipe } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 
 import { SaleService } from '../../../services/sale.service';
 import { CustomerService } from '../../../services/customer.service';
@@ -147,8 +148,8 @@ export class SaleFormComponent implements OnInit {
 
     this.saleService.create(request).subscribe({
       next: () => this.router.navigate(['/sales']),
-      error: () => {
-        this.error.set('Error al crear la venta');
+      error: (err: HttpErrorResponse) => {
+        this.error.set(err.error?.error || 'Error al crear la venta');
         this.submitting.set(false);
       }
     });

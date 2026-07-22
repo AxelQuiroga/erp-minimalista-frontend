@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Subject, debounceTime, distinctUntilChanged, switchMap, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { HttpErrorResponse } from '@angular/common/http';
 
 import { CustomerService } from '../../../services/customer.service';
 import { Customer } from '../../../models/customer.model';
@@ -41,7 +42,7 @@ export class CustomerListComponent implements OnInit {
       takeUntilDestroyed(this.destroyRef)
     ).subscribe({
       next: (data) => this.customers.set(data),
-      error: () => this.error.set('Error al buscar clientes')
+      error: (err: HttpErrorResponse) => this.error.set(err.error?.error || 'Error al buscar clientes')
     });
   }
 
@@ -60,8 +61,8 @@ export class CustomerListComponent implements OnInit {
         this.customers.set(data);
         this.loading.set(false);
       },
-      error: () => {
-        this.error.set('Error al cargar clientes');
+      error: (err: HttpErrorResponse) => {
+        this.error.set(err.error?.error || 'Error al cargar clientes');
         this.loading.set(false);
       }
     });
@@ -76,8 +77,8 @@ export class CustomerListComponent implements OnInit {
         this.customers.update(list => list.map(c => c.id === id ? { ...c, active: false } : c));
         this.togglingId.set(null);
       },
-      error: () => {
-        this.error.set('Error al desactivar el cliente');
+      error: (err: HttpErrorResponse) => {
+        this.error.set(err.error?.error || 'Error al desactivar el cliente');
         this.togglingId.set(null);
       }
     });
@@ -92,8 +93,8 @@ export class CustomerListComponent implements OnInit {
         this.customers.update(list => list.map(c => c.id === id ? updated : c));
         this.togglingId.set(null);
       },
-      error: () => {
-        this.error.set('Error al reactivar el cliente');
+      error: (err: HttpErrorResponse) => {
+        this.error.set(err.error?.error || 'Error al reactivar el cliente');
         this.togglingId.set(null);
       }
     });

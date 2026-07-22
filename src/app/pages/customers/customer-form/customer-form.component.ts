@@ -1,6 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { RouterLink, Router, ActivatedRoute } from '@angular/router';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
+import { HttpErrorResponse } from '@angular/common/http';
 
 import { CustomerService } from '../../../services/customer.service';
 import { CreateCustomerRequest, UpdateCustomerRequest } from '../../../models/customer.model';
@@ -48,8 +49,8 @@ export class CustomerFormComponent implements OnInit {
           this.form.patchValue(customer);
           this.loading.set(false);
         },
-        error: () => {
-          this.error.set('Error al cargar el cliente');
+        error: (err: HttpErrorResponse) => {
+          this.error.set(err.error?.error || 'Error al cargar el cliente');
           this.loading.set(false);
         }
       });
@@ -65,16 +66,16 @@ export class CustomerFormComponent implements OnInit {
     if (this.isEditing) {
       this.customerService.update(this.editingId, this.form.value as UpdateCustomerRequest).subscribe({
         next: () => this.router.navigate(['/customers']),
-        error: () => {
-          this.error.set('Error al actualizar el cliente');
+        error: (err: HttpErrorResponse) => {
+          this.error.set(err.error?.error || 'Error al actualizar el cliente');
           this.isSubmitting.set(false);
         }
       });
     } else {
       this.customerService.create(this.form.value as CreateCustomerRequest).subscribe({
         next: () => this.router.navigate(['/customers']),
-        error: () => {
-          this.error.set('Error al crear el cliente');
+        error: (err: HttpErrorResponse) => {
+          this.error.set(err.error?.error || 'Error al crear el cliente');
           this.isSubmitting.set(false);
         }
       });

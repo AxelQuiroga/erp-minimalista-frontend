@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { Subject, debounceTime, switchMap, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { HttpErrorResponse } from '@angular/common/http';
 
 import { SaleService } from '../../../services/sale.service';
 import { Sale } from '../../../models/sale.model';
@@ -55,7 +56,7 @@ export class SaleListComponent implements OnInit {
       takeUntilDestroyed(this.destroyRef)
     ).subscribe({
       next: (data) => this.sales.set(data),
-      error: () => this.error.set('Error al filtrar ventas')
+      error: (err: HttpErrorResponse) => this.error.set(err.error?.error || 'Error al filtrar ventas')
     });
   }
 
@@ -102,8 +103,8 @@ export class SaleListComponent implements OnInit {
         this.sales.set(data);
         this.loading.set(false);
       },
-      error: () => {
-        this.error.set('Error al cargar ventas');
+      error: (err: HttpErrorResponse) => {
+        this.error.set(err.error?.error || 'Error al cargar ventas');
         this.loading.set(false);
       }
     });
@@ -118,8 +119,8 @@ export class SaleListComponent implements OnInit {
       next: (updated) => {
         this.sales.update(list => list.map(s => s.id === sale.id ? updated : s));
       },
-      error: () => {
-        this.error.set('Error al cancelar la venta');
+      error: (err: HttpErrorResponse) => {
+        this.error.set(err.error?.error || 'Error al cancelar la venta');
       }
     });
   }

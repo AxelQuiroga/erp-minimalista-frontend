@@ -1,6 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { RouterLink, Router, ActivatedRoute } from '@angular/router';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
+import { HttpErrorResponse } from '@angular/common/http';
 
 import { ProductService } from '../../../services/product.service';
 import { CategoryService } from '../../../services/category.service';
@@ -50,12 +51,12 @@ export class ProductFormComponent implements OnInit {
 
       this.productService.getById(this.editingId).subscribe({
         next: (product) => this.form.patchValue(product),
-        error: () => this.error.set('Error al cargar el producto')
+        error: (err: HttpErrorResponse) => this.error.set(err.error?.error || 'Error al cargar el producto')
       });
     }
 
     this.categoryService.getAll().subscribe({
-      next: (data) => this.categories.set(data),
+      next: (data) => this.categories.set(data.filter(c => c.active)),
       error: () => this.error.set('Error al cargar categorías')
     });
   }
@@ -69,16 +70,16 @@ export class ProductFormComponent implements OnInit {
     if (this.isEditing) {
       this.productService.update(this.editingId, this.form.value as UpdateProductRequest).subscribe({
         next: () => this.router.navigate(['/products']),
-        error: () => {
-          this.error.set('Error al actualizar el producto');
+        error: (err: HttpErrorResponse) => {
+          this.error.set(err.error?.error || 'Error al actualizar el producto');
           this.isSubmitting.set(false);
         }
       });
     } else {
       this.productService.create(this.form.value as CreateProductRequest).subscribe({
         next: () => this.router.navigate(['/products']),
-        error: () => {
-          this.error.set('Error al crear el producto');
+        error: (err: HttpErrorResponse) => {
+          this.error.set(err.error?.error || 'Error al crear el producto');
           this.isSubmitting.set(false);
         }
       });

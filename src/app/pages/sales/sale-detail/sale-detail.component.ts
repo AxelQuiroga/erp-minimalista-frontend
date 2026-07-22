@@ -2,6 +2,7 @@ import { Component, OnInit, signal } from '@angular/core';
 import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { CurrencyPipe, DatePipe } from '@angular/common';
 
+import { HttpErrorResponse } from '@angular/common/http';
 import { SaleService } from '../../../services/sale.service';
 import { Sale } from '../../../models/sale.model';
 
@@ -31,8 +32,8 @@ export class SaleDetailComponent implements OnInit {
         this.sale.set(data);
         this.loading.set(false);
       },
-      error: () => {
-        this.error.set('Error al cargar la venta');
+      error: (err: HttpErrorResponse) => {
+        this.error.set(err.error?.error || 'Error al cargar la venta');
         this.loading.set(false);
       }
     });
@@ -49,8 +50,8 @@ export class SaleDetailComponent implements OnInit {
       next: (updated) => {
         this.sale.set(updated);
       },
-      error: () => {
-        this.error.set('Error al cancelar la venta');
+      error: (err: HttpErrorResponse) => {
+        this.error.set(err.error?.error || 'Error al cancelar la venta');
       }
     });
   }

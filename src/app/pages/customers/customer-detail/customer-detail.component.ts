@@ -2,6 +2,7 @@ import { Component, OnInit, signal } from '@angular/core';
 import { RouterLink, ActivatedRoute } from '@angular/router';
 import { DatePipe } from '@angular/common';
 
+import { HttpErrorResponse } from '@angular/common/http';
 import { CustomerService } from '../../../services/customer.service';
 import { Customer } from '../../../models/customer.model';
 
@@ -30,8 +31,8 @@ export class CustomerDetailComponent implements OnInit {
         this.customer.set(data);
         this.loading.set(false);
       },
-      error: (err) => {
-        this.error.set('Error al cargar el cliente');
+      error: (err: HttpErrorResponse) => {
+        this.error.set(err.error?.error || 'Error al cargar el cliente');
         this.loading.set(false);
       }
     });

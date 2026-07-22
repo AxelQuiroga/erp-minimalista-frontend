@@ -2,6 +2,7 @@ import { Component, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CurrencyPipe, DatePipe } from '@angular/common';
 
+import { HttpErrorResponse } from '@angular/common/http';
 import { DashboardService, DashboardData } from '../../services/dashboard.service';
 
 @Component({
@@ -24,8 +25,8 @@ export class DashboardComponent implements OnInit {
         this.data.set(result);
         this.loading.set(false);
       },
-      error: () => {
-        this.error.set('Error al cargar datos del dashboard');
+      error: (err: HttpErrorResponse) => {
+        this.error.set(err.error?.error || 'Error al cargar datos del dashboard');
         this.loading.set(false);
       }
     });
