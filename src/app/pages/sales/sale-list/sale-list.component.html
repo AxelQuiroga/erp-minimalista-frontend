@@ -12,8 +12,14 @@
       <option value="COMPLETED">Completadas</option>
       <option value="CANCELLED">Canceladas</option>
     </select>
-    <input type="date" [ngModel]="fromFilter()" (ngModelChange)="fromFilter.set($event); onFilterChange()" placeholder="Desde" />
-    <input type="date" [ngModel]="toFilter()" (ngModelChange)="toFilter.set($event); onFilterChange()" placeholder="Hasta" />
+    <label class="filter-date">
+      <span>Desde</span>
+      <input type="date" [ngModel]="fromFilter()" (ngModelChange)="fromFilter.set($event); onFilterChange()" />
+    </label>
+    <label class="filter-date">
+      <span>Hasta</span>
+      <input type="date" [ngModel]="toFilter()" (ngModelChange)="toFilter.set($event); onFilterChange()" />
+    </label>
     @if (hasActiveFilters()) {
       <button class="btn btn-secondary" (click)="clearFilters()">Limpiar filtros</button>
     }
