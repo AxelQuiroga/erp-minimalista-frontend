@@ -22,5 +22,6 @@ export const routes: Routes = [
   { path: 'sales/:id', component: SaleDetailComponent },
   { path: 'customers', component: CustomerListComponent },
   { path: 'customers/new', component: CustomerFormComponent },
+  { path: 'customers/:id/edit', component: CustomerFormComponent },
   { path: 'customers/:id', component: CustomerDetailComponent },
 ];

@@ -25,4 +25,5 @@ export interface UpdateProductRequest {
   costPrice: number;
   salePrice: number;
   currentStock: number;
+  active: boolean;
 }

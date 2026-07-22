@@ -20,4 +20,5 @@ export interface UpdateCustomerRequest {
   email: string;
   phone: string;
   address: string;
+  active: boolean;
 }
