@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, computed } from '@angular/core';
 import { RouterLink, Router } from '@angular/router';
 import { ReactiveFormsModule, FormGroup, FormControl, FormArray, Validators } from '@angular/forms';
 import { CurrencyPipe } from '@angular/common';
@@ -25,9 +25,16 @@ export class SaleFormComponent implements OnInit {
 
   readonly total = signal(0);
 
+  readonly productMap = computed(() => {
+    const map = new Map<number, Product>();
+    for (const p of this.products()) {
+      map.set(p.id, p);
+    }
+    return map;
+  });
 
   form = new FormGroup({
-    customerId: new FormControl<number>(0, Validators.required),
+    customerId: new FormControl<number>(0, [Validators.required, Validators.min(1)]),
     paymentMethod: new FormControl('', Validators.required),
     notes: new FormControl(''),
     items: new FormArray<FormGroup>([])
@@ -60,7 +67,7 @@ export class SaleFormComponent implements OnInit {
 
   addItem(): void {
     const itemForm = new FormGroup({
-      productId: new FormControl<number>(0, Validators.required),
+      productId: new FormControl<number>(0, [Validators.required, Validators.min(1)]),
       quantity: new FormControl<number>(1, [Validators.required, Validators.min(1)]),
       unitPrice: new FormControl<number>(0, { nonNullable: true })
     });
@@ -74,8 +81,27 @@ export class SaleFormComponent implements OnInit {
     this.updateTotal();
   }
 
+  getStockForItem(index: number): { available: number; quantity: number } | null {
+    const item = this.items.at(index);
+    if (!item) return null;
+
+    const productId = item.get('productId')?.value;
+    const quantity = item.get('quantity')?.value || 0;
+
+    if (!productId || productId === 0) return null;
+
+    const product = this.productMap().get(Number(productId));
+    if (!product) return null;
+
+    return { available: product.currentStock, quantity };
+  }
+
+  getProductName(productId: number): string {
+    return this.productMap().get(Number(productId))?.name ?? 'Producto';
+  }
+
   onProductSelect(index: number): void {
-    const productId = this.items.at(index).get('productId')?.value;
+    const productId = Number(this.items.at(index).get('productId')?.value);
     const product = this.products().find(p => p.id === productId);
     if (product) {
       this.items.at(index).get('unitPrice')?.setValue(product.salePrice);
@@ -95,17 +121,27 @@ export class SaleFormComponent implements OnInit {
   onSubmit(): void {
     if (this.form.invalid || this.items.length === 0) return;
 
+    // Validar stock antes de enviar
+    for (let i = 0; i < this.items.length; i++) {
+      const info = this.getStockForItem(i);
+      if (info && info.quantity > info.available) {
+        const productId = this.items.at(i).get('productId')?.value;
+        this.error.set(`Stock insuficiente para "${this.getProductName(productId)}". Disponible: ${info.available}, solicitado: ${info.quantity}`);
+        return;
+      }
+    }
+
     this.submitting.set(true);
     this.error.set('');
 
     const request: CreateSaleRequest = {
-      customerId: this.form.value.customerId!,
+      customerId: Number(this.form.value.customerId),
       paymentMethod: this.form.value.paymentMethod!,
       notes: this.form.value.notes || undefined,
       items: this.items.controls.map(item => ({
-        productId: item.get('productId')?.value,
-        quantity: item.get('quantity')?.value,
-        unitPrice: item.get('unitPrice')?.value
+        productId: Number(item.get('productId')?.value),
+        quantity: Number(item.get('quantity')?.value),
+        unitPrice: Number(item.get('unitPrice')?.value)
       }))
     };
 

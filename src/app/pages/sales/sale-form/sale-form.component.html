@@ -42,12 +42,28 @@
               <option value="0" disabled>Producto...</option>
               @for (p of products(); track p.id) {
                 @if (p.active) {
-                <option [value]="p.id">{{ p.name }} ({{ p.sku }})</option>
+                <option [value]="p.id" [disabled]="p.currentStock === 0">
+                  {{ p.name }} ({{ p.sku }}) — Stock: {{ p.currentStock }}
+                </option>
               }
               }
             </select>
 
-            <input type="number" class="form-control" formControlName="quantity" placeholder="Cant." min="1">
+            <div class="item-quantity">
+              <input type="number" class="form-control" formControlName="quantity" placeholder="Cant." min="1">
+
+              @if (getStockForItem($index); as stock) {
+                <small class="stock-feedback"
+                       [class.stock-ok]="stock.quantity > 0 && stock.quantity <= stock.available"
+                       [class.stock-error]="stock.quantity > stock.available">
+                  @if (stock.quantity > stock.available) {
+                    Stock insuficiente — disponible: {{ stock.available }}
+                  } @else if (stock.quantity > 0) {
+                    Stock disponible: {{ stock.available }}
+                  }
+                </small>
+              }
+            </div>
 
             <input type="number" class="form-control" formControlName="unitPrice" placeholder="Precio" readonly>
 
@@ -75,7 +91,7 @@
       <button type="submit" class="btn btn-primary" [disabled]="form.invalid || items.length === 0 || submitting()">
         {{ submitting() ? 'Creando...' : 'Crear Venta' }}
       </button>
-      <a routerLink="/sales" class="btn btn-secondary">Cancelar</a>
+      <a routerLink="/sales" class="btn btn-secondary">Volver</a>
     </div>
 
   </form>

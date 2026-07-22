@@ -50,5 +50,38 @@
       <a [routerLink]="['/products', product.id, 'edit']" class="btn btn-primary">Editar</a>
       <a routerLink="/products" class="btn btn-secondary">Volver</a>
     </div>
+
+    @if (stockMovements().length > 0) {
+      <div style="margin-top: 2rem;">
+        <h2>Movimientos de Stock</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Tipo</th>
+              <th>Cantidad</th>
+              <th>Motivo</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (mov of stockMovements(); track mov.id) {
+              <tr>
+                <td>{{ mov.createdAt | date:'dd/MM/yyyy' }}</td>
+                <td>
+                  @if (mov.type === 'IN') { Entrada }
+                  @else if (mov.type === 'OUT') { Salida }
+                  @else { Ajuste }
+                </td>
+                <td [class.text-success]="mov.type === 'IN'"
+                    [class.text-danger]="mov.type === 'OUT'">
+                  {{ mov.absoluteQuantity }}
+                </td>
+                <td>{{ mov.reason }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
   }
 </div>

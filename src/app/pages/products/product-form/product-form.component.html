@@ -40,6 +40,16 @@
       <input id="currentStock" type="number" class="form-control" formControlName="currentStock">
     </div>
 
+    @if (isEditing) {
+      <div class="form-group">
+        <label for="active">Estado</label>
+        <select id="active" class="form-control" formControlName="active">
+          <option [value]="true">Activo</option>
+          <option [value]="false">Inactivo</option>
+        </select>
+      </div>
+    }
+
     @if (error()) {
       <p class="error">{{ error() }}</p>
     }
@@ -48,7 +58,7 @@
       <button type="submit" class="btn btn-primary" [disabled]="form.invalid || isSubmitting()">
         {{ isSubmitting() ? (isEditing ? 'Actualizando...' : 'Guardando...') : (isEditing ? 'Actualizar' : 'Guardar') }}
       </button>
-      <a routerLink="/products" class="btn btn-secondary">Cancelar</a>
+      <a routerLink="/products" class="btn btn-secondary">Volver</a>
     </div>
 
   </form>

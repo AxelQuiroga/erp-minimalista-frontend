@@ -30,7 +30,8 @@ export class ProductFormComponent implements OnInit {
     costPrice: new FormControl(0, [Validators.required, Validators.min(0)]),
     salePrice: new FormControl(0, [Validators.required, Validators.min(0)]),
     currentStock: new FormControl(0, [Validators.required, Validators.min(0)]),
-    categoryId: new FormControl(0, Validators.required),
+    categoryId: new FormControl(0, [Validators.min(1)]),
+    active: new FormControl(true),
   });
 
   constructor(

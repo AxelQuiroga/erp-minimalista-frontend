@@ -1,38 +1,54 @@
 <div class="page">
-  <h1>Nuevo Cliente</h1>
+  <h1>{{ pageTitle }}</h1>
 
-  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+  @if (loading()) {
+    <p class="loading">Cargando cliente...</p>
+  }
 
-    <div class="form-group">
-      <label for="name">Nombre</label>
-      <input id="name" type="text" class="form-control" formControlName="name" placeholder="Nombre del cliente">
-    </div>
+  @if (!loading()) {
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
 
-    <div class="form-group">
-      <label for="email">Email</label>
-      <input id="email" type="email" class="form-control" formControlName="email" placeholder="correo@ejemplo.com">
-    </div>
+      <div class="form-group">
+        <label for="name">Nombre</label>
+        <input id="name" type="text" class="form-control" formControlName="name" placeholder="Nombre del cliente">
+      </div>
 
-    <div class="form-group">
-      <label for="phone">Teléfono</label>
-      <input id="phone" type="tel" class="form-control" formControlName="phone" placeholder="+54 11 1234-5678">
-    </div>
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input id="email" type="email" class="form-control" formControlName="email" placeholder="correo@ejemplo.com">
+      </div>
 
-    <div class="form-group">
-      <label for="address">Dirección</label>
-      <input id="address" type="text" class="form-control" formControlName="address" placeholder="Dirección">
-    </div>
+      <div class="form-group">
+        <label for="phone">Teléfono</label>
+        <input id="phone" type="tel" class="form-control" formControlName="phone" placeholder="+54 11 1234-5678">
+      </div>
 
-    @if (error()) {
-      <p class="error">{{ error() }}</p>
-    }
+      <div class="form-group">
+        <label for="address">Dirección</label>
+        <input id="address" type="text" class="form-control" formControlName="address" placeholder="Dirección">
+      </div>
 
-    <div class="form-actions">
-      <button type="submit" class="btn btn-primary" [disabled]="form.invalid || isSubmitting()">
-        {{ isSubmitting() ? 'Guardando...' : 'Guardar' }}
-      </button>
-      <a routerLink="/customers" class="btn btn-secondary">Cancelar</a>
-    </div>
+      @if (isEditing) {
+        <div class="form-group">
+          <label for="active">Estado</label>
+          <select id="active" class="form-control" formControlName="active">
+            <option [value]="true">Activo</option>
+            <option [value]="false">Inactivo</option>
+          </select>
+        </div>
+      }
 
-  </form>
+      @if (error()) {
+        <p class="error">{{ error() }}</p>
+      }
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary" [disabled]="form.invalid || isSubmitting()">
+          {{ isSubmitting() ? (isEditing ? 'Actualizando...' : 'Guardando...') : (isEditing ? 'Actualizar' : 'Guardar') }}
+        </button>
+        <a routerLink="/customers" class="btn btn-secondary">Volver</a>
+      </div>
+
+    </form>
+  }
 </div>
