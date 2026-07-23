@@ -6,11 +6,17 @@
     <div class="form-group">
       <label for="name">Nombre</label>
       <input id="name" type="text" class="form-control" formControlName="name" placeholder="Nombre del producto">
+      @if (submitted() && form.get('name')?.invalid) {
+        <small class="field-error">El nombre es obligatorio</small>
+      }
     </div>
 
     <div class="form-group">
       <label for="sku">SKU</label>
       <input id="sku" type="text" class="form-control" formControlName="sku" placeholder="Código único">
+      @if (submitted() && form.get('sku')?.invalid) {
+        <small class="field-error">El SKU es obligatorio</small>
+      }
     </div>
 
     <div class="form-group">
@@ -21,23 +27,50 @@
           <option [value]="cat.id">{{ cat.name }}</option>
         }
       </select>
+      @if (submitted() && form.get('categoryId')?.invalid) {
+        <small class="field-error">Seleccioná una categoría</small>
+      }
     </div>
 
     <div class="form-row">
       <div class="form-group">
         <label for="costPrice">Precio Costo</label>
         <input id="costPrice" type="number" class="form-control" formControlName="costPrice">
+        @if (submitted() && form.get('costPrice')?.invalid) {
+          @if (form.get('costPrice')?.errors?.['required']) {
+            <small class="field-error">El precio costo es obligatorio</small>
+          }
+          @if (form.get('costPrice')?.errors?.['min']) {
+            <small class="field-error">No puede ser negativo</small>
+          }
+        }
       </div>
 
       <div class="form-group">
         <label for="salePrice">Precio Venta</label>
         <input id="salePrice" type="number" class="form-control" formControlName="salePrice">
+        @if (submitted() && form.get('salePrice')?.invalid) {
+          @if (form.get('salePrice')?.errors?.['required']) {
+            <small class="field-error">El precio venta es obligatorio</small>
+          }
+          @if (form.get('salePrice')?.errors?.['min']) {
+            <small class="field-error">No puede ser negativo</small>
+          }
+        }
       </div>
     </div>
 
     <div class="form-group">
       <label for="currentStock">Stock Inicial</label>
       <input id="currentStock" type="number" class="form-control" formControlName="currentStock">
+      @if (submitted() && form.get('currentStock')?.invalid) {
+        @if (form.get('currentStock')?.errors?.['required']) {
+          <small class="field-error">El stock es obligatorio</small>
+        }
+        @if (form.get('currentStock')?.errors?.['min']) {
+          <small class="field-error">No puede ser negativo</small>
+        }
+      }
     </div>
 
     @if (isEditing) {
@@ -55,7 +88,7 @@
     }
 
     <div class="form-actions">
-      <button type="submit" class="btn btn-primary" [disabled]="form.invalid || isSubmitting()">
+      <button type="submit" class="btn btn-primary" [disabled]="isSubmitting()">
         {{ isSubmitting() ? (isEditing ? 'Actualizando...' : 'Guardando...') : (isEditing ? 'Actualizar' : 'Guardar') }}
       </button>
       <a routerLink="/products" class="btn btn-secondary">Volver</a>

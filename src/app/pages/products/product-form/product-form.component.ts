@@ -20,6 +20,7 @@ export class ProductFormComponent implements OnInit {
   readonly isSubmitting = signal(false);
   readonly loading = signal(true);
   readonly error = signal('');
+  readonly submitted = signal(false);
 
   isEditing = false;
   editingId = 0;
@@ -62,6 +63,8 @@ export class ProductFormComponent implements OnInit {
   }
 
   onSubmit(): void {
+    this.submitted.set(true);
+    this.form.markAllAsTouched();
     if (this.form.invalid) return;
 
     this.isSubmitting.set(true);

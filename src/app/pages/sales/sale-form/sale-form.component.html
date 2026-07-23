@@ -14,6 +14,9 @@
           }
           }
         </select>
+        @if (submitted() && form.get('customerId')?.invalid) {
+          <small class="field-error">Seleccioná un cliente</small>
+        }
       </div>
 
       <div class="form-group">
@@ -24,6 +27,9 @@
           <option value="CARD">Tarjeta</option>
           <option value="TRANSFER">Transferencia</option>
         </select>
+        @if (submitted() && form.get('paymentMethod')?.invalid) {
+          <small class="field-error">Seleccioná un método de pago</small>
+        }
       </div>
     </div>
 
@@ -38,19 +44,32 @@
       <div formArrayName="items">
         @for (item of items.controls; track $index) {
           <div [formGroupName]="$index" class="item-row">
-            <select class="form-control" formControlName="productId" (change)="onProductSelect($index)">
-              <option value="0" disabled>Producto...</option>
-              @for (p of products(); track p.id) {
-                @if (p.active) {
-                <option [value]="p.id" [disabled]="p.currentStock === 0">
-                  {{ p.name }} ({{ p.sku }}) — Stock: {{ p.currentStock }}
-                </option>
+            <div>
+              <select class="form-control" formControlName="productId" (change)="onProductSelect($index)">
+                <option value="0" disabled>Producto...</option>
+                @for (p of products(); track p.id) {
+                  @if (p.active) {
+                  <option [value]="p.id" [disabled]="p.currentStock === 0">
+                    {{ p.name }} ({{ p.sku }}) — Stock: {{ p.currentStock }}
+                  </option>
+                }
+                }
+              </select>
+              @if (submitted() && items.at($index).get('productId')?.invalid) {
+                <small class="field-error">Seleccioná un producto</small>
               }
-              }
-            </select>
+            </div>
 
             <div class="item-quantity">
               <input type="number" class="form-control" formControlName="quantity" placeholder="Cant." min="1">
+              @if (submitted() && items.at($index).get('quantity')?.invalid) {
+                @if (items.at($index).get('quantity')?.errors?.['required']) {
+                  <small class="field-error">Requerido</small>
+                }
+                @if (items.at($index).get('quantity')?.errors?.['min']) {
+                  <small class="field-error">Mínimo 1</small>
+                }
+              }
 
               @if (getStockForItem($index); as stock) {
                 <small class="stock-feedback"
@@ -88,7 +107,10 @@
     }
 
     <div class="form-actions">
-      <button type="submit" class="btn btn-primary" [disabled]="form.invalid || items.length === 0 || submitting()">
+      @if (submitted() && items.length === 0) {
+        <p class="field-error" style="margin-bottom:0.5rem">Agregá al menos un producto a la venta</p>
+      }
+      <button type="submit" class="btn btn-primary" [disabled]="submitting()">
         {{ submitting() ? 'Creando...' : 'Crear Venta' }}
       </button>
       <a routerLink="/sales" class="btn btn-secondary">Volver</a>

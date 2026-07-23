@@ -23,6 +23,7 @@ export class SaleFormComponent implements OnInit {
   readonly products = signal<Product[]>([]);
   readonly submitting = signal(false);
   readonly error = signal('');
+  readonly submitted = signal(false);
 
   readonly total = signal(0);
 
@@ -120,6 +121,8 @@ export class SaleFormComponent implements OnInit {
   }
 
   onSubmit(): void {
+    this.submitted.set(true);
+    this.form.markAllAsTouched();
     if (this.form.invalid || this.items.length === 0) return;
 
     // Validar stock antes de enviar

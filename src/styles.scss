@@ -247,10 +247,26 @@ table {
   margin-bottom: 1rem;
 }
 
+.field-error {
+  color: var(--danger);
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
 .form-actions {
   display: flex;
   gap: 0.5rem;
   margin-top: 1.5rem;
+}
+
+.form-control.ng-invalid.ng-touched {
+  border-color: var(--danger);
+  &:focus {
+    box-shadow: 0 0 0 2px rgba(211,47,47,0.15);
+  }
 }
 
 .page-actions {

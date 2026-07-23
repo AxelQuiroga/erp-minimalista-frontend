@@ -11,21 +11,38 @@
       <div class="form-group">
         <label for="name">Nombre</label>
         <input id="name" type="text" class="form-control" formControlName="name" placeholder="Nombre del cliente">
+        @if (submitted() && form.get('name')?.invalid) {
+          <small class="field-error">El nombre es obligatorio</small>
+        }
       </div>
 
       <div class="form-group">
         <label for="email">Email</label>
         <input id="email" type="email" class="form-control" formControlName="email" placeholder="correo@ejemplo.com">
+        @if (submitted() && form.get('email')?.invalid) {
+          @if (form.get('email')?.errors?.['required']) {
+            <small class="field-error">El email es obligatorio</small>
+          }
+          @if (form.get('email')?.errors?.['email']) {
+            <small class="field-error">Formato de email inválido</small>
+          }
+        }
       </div>
 
       <div class="form-group">
         <label for="phone">Teléfono</label>
         <input id="phone" type="tel" class="form-control" formControlName="phone" placeholder="+54 11 1234-5678">
+        @if (submitted() && form.get('phone')?.invalid) {
+          <small class="field-error">El teléfono es obligatorio</small>
+        }
       </div>
 
       <div class="form-group">
         <label for="address">Dirección</label>
         <input id="address" type="text" class="form-control" formControlName="address" placeholder="Dirección">
+        @if (submitted() && form.get('address')?.invalid) {
+          <small class="field-error">La dirección es obligatoria</small>
+        }
       </div>
 
       @if (isEditing) {
@@ -43,7 +60,7 @@
       }
 
       <div class="form-actions">
-        <button type="submit" class="btn btn-primary" [disabled]="form.invalid || isSubmitting()">
+        <button type="submit" class="btn btn-primary" [disabled]="isSubmitting()">
           {{ isSubmitting() ? (isEditing ? 'Actualizando...' : 'Guardando...') : (isEditing ? 'Actualizar' : 'Guardar') }}
         </button>
         <a routerLink="/customers" class="btn btn-secondary">Volver</a>
