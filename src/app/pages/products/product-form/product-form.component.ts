@@ -17,6 +17,7 @@ import { CreateProductRequest, UpdateProductRequest } from '../../../models/prod
 export class ProductFormComponent implements OnInit {
 
   readonly categories = signal<Category[]>([]);
+  readonly categoriesLoaded = signal(false);
   readonly isSubmitting = signal(false);
   readonly loading = signal(true);
   readonly error = signal('');
@@ -29,8 +30,8 @@ export class ProductFormComponent implements OnInit {
   form = new FormGroup({
     name: new FormControl('', Validators.required),
     sku: new FormControl('', Validators.required),
-    costPrice: new FormControl(0, [Validators.required, Validators.min(0)]),
-    salePrice: new FormControl(0, [Validators.required, Validators.min(0)]),
+    costPrice: new FormControl('', [Validators.required, Validators.min(0.01)]),
+    salePrice: new FormControl('', [Validators.required, Validators.min(0.01)]),
     currentStock: new FormControl(0, [Validators.required, Validators.min(0)]),
     categoryId: new FormControl(0, [Validators.min(1)]),
     active: new FormControl(true),
@@ -57,7 +58,10 @@ export class ProductFormComponent implements OnInit {
     }
 
     this.categoryService.getAll().subscribe({
-      next: (data) => this.categories.set(data.filter(c => c.active)),
+      next: (data) => {
+        this.categories.set(data.filter(c => c.active));
+        this.categoriesLoaded.set(true);
+      },
       error: () => this.error.set('Error al cargar categorías')
     });
   }
