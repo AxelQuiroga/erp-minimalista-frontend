@@ -7,6 +7,7 @@ import { API_URL } from '../api.config';
 export interface DashboardData {
   productCount: number;
   customerCount: number;
+  categoryCount: number;
   saleCount: number;
   salesToday: number;
   salesTodayAmount: number;

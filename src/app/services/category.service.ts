@@ -30,4 +30,8 @@ export class CategoryService {
   deactivate(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
+
+  updateStatus(id: number, status: { active: boolean }): Observable<Category> {
+    return this.http.patch<Category>(`${this.apiUrl}/${id}/status`, status);
+  }
 }
