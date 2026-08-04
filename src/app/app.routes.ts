@@ -9,6 +9,8 @@ import { SaleDetailComponent } from './pages/sales/sale-detail/sale-detail.compo
 import { CustomerListComponent } from './pages/customers/customer-list/customer-list.component';
 import { CustomerFormComponent } from './pages/customers/customer-form/customer-form.component';
 import { CustomerDetailComponent } from './pages/customers/customer-detail/customer-detail.component';
+import { CategoryListComponent } from './pages/categories/category-list/category-list.component';
+import { CategoryFormComponent } from './pages/categories/category-form/category-form.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
@@ -24,4 +26,7 @@ export const routes: Routes = [
   { path: 'customers/new', component: CustomerFormComponent },
   { path: 'customers/:id/edit', component: CustomerFormComponent },
   { path: 'customers/:id', component: CustomerDetailComponent },
+  { path: 'categories', component: CategoryListComponent },
+  { path: 'categories/new', component: CategoryFormComponent },
+  { path: 'categories/:id/edit', component: CategoryFormComponent },
 ];

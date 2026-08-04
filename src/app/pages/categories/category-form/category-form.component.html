@@ -1,0 +1,32 @@
+<div class="page">
+  <h1>{{ pageTitle }}</h1>
+
+  @if (loading()) {
+    <p class="loading">Cargando categoría...</p>
+  }
+
+  @if (!loading()) {
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+      <div class="form-group">
+        <label for="name">Nombre</label>
+        <input id="name" type="text" class="form-control" formControlName="name" placeholder="Nombre de la categoría">
+        @if (submitted() && form.get('name')?.invalid) {
+          <small class="field-error">El nombre es obligatorio</small>
+        }
+      </div>
+
+      @if (error()) {
+        <p class="error">{{ error() }}</p>
+      }
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary" [disabled]="isSubmitting()">
+          {{ isSubmitting() ? (isEditing ? 'Actualizando...' : 'Guardando...') : (isEditing ? 'Actualizar' : 'Guardar') }}
+        </button>
+        <a routerLink="/categories" class="btn btn-secondary">Volver</a>
+      </div>
+
+    </form>
+  }
+</div>
